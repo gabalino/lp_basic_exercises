@@ -66,5 +66,47 @@ def generate_chat_history():
     return messages
 
 
+def get_most_send_user(messages: list[dict]) -> int:
+    sender = dict()
+    for message in messages:
+        sender_id = message['sent_by']
+        sender[sender_id] = sender.get(sender_id, 0) + 1
+    sender_id, count = max(sender.items(), key=lambda x: x[1])
+    return sender_id
+
+
+def get_most_replay_user(messages: list[dict]) -> int:
+    reply_id = dict()
+    user_id = 0
+    for message in messages:
+        message_id = message['reply_for']
+        if message_id:
+            reply_id[message_id] = reply_id.get(message_id, 0) + 1
+    max_message_id, count = max(reply_id.items(), key=lambda x: x[1])
+    messages_copy = messages.copy()
+    while user_id == 0:
+        message = messages_copy.pop()
+        if message['id'] == max_message_id:
+            user_id = message['sent_by']
+    return user_id
+
+
+def get_most_viewed(messages: list[dict]) -> list:
+    number_views = dict()
+    user_ids = []
+    for message in messages:
+        message_id = message['id']
+        if message_id:
+            number_views[message_id] = len(set(message['seen_by']))
+    max_viewed, count = max(number_views.items(), key=lambda x: x[1])
+    for message in messages:
+        if len(set(message['seen_by'])) == count:
+            user_ids.append(message['sent_by'])
+    return user_ids
+
+
 if __name__ == "__main__":
-    print(generate_chat_history())
+    chat_messages = generate_chat_history()
+    print(get_most_send_user(chat_messages))
+    print(get_most_replay_user(chat_messages))
+    print(get_most_viewed(chat_messages))

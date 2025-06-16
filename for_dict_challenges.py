@@ -1,3 +1,10 @@
+def sum_dict(elements: list, param='first_name') -> dict:
+    result = dict()
+    for element in elements:
+        k = element[param]
+        result[k] = result.get(k, 0) + 1
+    return result
+
 # Задание 1
 # Дан список учеников, нужно посчитать количество повторений каждого имени ученика
 # Пример вывода:
@@ -12,8 +19,10 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Петя'},
 ]
-# ???
-
+print('\n# Задание 1')
+names = sum_dict(students)
+for name, count in names.items():
+    print(f"{name}: {count}")
 
 # Задание 2
 # Дан список учеников, нужно вывести самое часто повторящееся имя
@@ -26,8 +35,14 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Оля'},
 ]
-# ???
-
+print('\n# Задание 2')
+most_name = ''
+names = sum_dict(students)
+most_count = max(names.values())
+for name, count in names.items():
+    if count == most_count:
+        most_name = name
+print(f"Самое частое имя среди учеников: {most_name}")
 
 # Задание 3
 # Есть список учеников в нескольких классах, нужно вывести самое частое имя в каждом классе.
@@ -44,15 +59,23 @@ school_students = [
         {'first_name': 'Маша'},
         {'first_name': 'Маша'},
         {'first_name': 'Оля'},
-    ],[  # это – третий класс
+    ],
+    [  # это – третий класс
         {'first_name': 'Женя'},
         {'first_name': 'Петя'},
         {'first_name': 'Женя'},
         {'first_name': 'Саша'},
     ],
 ]
-# ???
-
+print('\n# Задание 3')
+for number, grade in enumerate(school_students, start=1):
+    most_name = ''
+    names = sum_dict(grade)
+    most_count = max(names.values())
+    for name, count in names.items():
+        if count == most_count:
+            most_name = name
+    print(f"Самое частое имя в классе {number}: {most_name}")
 
 # Задание 4
 # Для каждого класса нужно вывести количество девочек и мальчиков в нём.
@@ -72,9 +95,15 @@ is_male = {
     'Миша': True,
     'Даша': False,
 }
-# ???
-
-
+print('\n# Задание 4')
+for grade in school:
+    boys, girls = 0, 0
+    for student in grade['students']:
+        if is_male[student['first_name']]:
+            boys += 1
+        else:
+            girls += 1
+    print(f"Класс {grade['class']}: девочки {girls}, мальчики {boys} ")
 # Задание 5
 # По информации о учениках разных классов нужно найти класс, в котором больше всего девочек и больше всего мальчиков
 # Пример вывода:
@@ -91,5 +120,20 @@ is_male = {
     'Олег': True,
     'Миша': True,
 }
-# ???
-
+print('\n# Задание 5')
+gender = {'boys': {'grade': '', 'count': 0}, 'girls': {'grade': ' ', 'count': 0}}
+for grade in school:
+    boys, girls = 0, 0
+    for student in grade['students']:
+        if is_male[student['first_name']]:
+            boys += 1
+        else:
+            girls += 1
+    if gender['boys'].get('count', 0) < boys:
+        gender['boys']['grade'] = grade['class']
+        gender['boys']['count'] = boys
+    if gender['girls'].get('count', 0) < girls:
+        gender['girls']['grade'] = grade['class']
+        gender['girls']['count'] = girls
+print(f'Больше всего мальчиков в классе {gender["boys"]["grade"]}')
+print(f'Больше всего девочек в классе {gender["girls"]["grade"]}')
